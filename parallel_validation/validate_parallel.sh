@@ -41,4 +41,4 @@ mkdir -p "$REPORT_DIR/complete"
 
 find "$DIRNAME" -name "*.xml" -print0 | xargs -0 -n"${BATCH_SIZE}" -P"${WORKERS}" ./validate_worker.sh "$CONFIG_FILE" "$CATALOG_FILE" "$REPORT_DIR"
 
-
+echo "Done."
