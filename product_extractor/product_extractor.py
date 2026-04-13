@@ -52,7 +52,6 @@ def main():
             else glob.glob(f"{dirname}/{filebase}.*")
         )
         for candidate in candidates:
-            logging.info(f"Processing {candidate}")
             if args.prefix:
                 if not candidate.startswith(args.prefix):
                     logging.info(
@@ -63,9 +62,6 @@ def main():
             else:
                 relative_path = candidate
             destination = os.path.join(args.destination, relative_path)
-            logging.info(
-                f"Relative path: {relative_path}, destination: {destination}, args.destination: {args.destination}"
-            )
             if not args.dry_run:
                 shutil.copy(candidate, destination)
             logging.info(f"{candidate} -> {destination}")
