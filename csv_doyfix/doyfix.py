@@ -37,7 +37,8 @@ def validate(args):
         row = next(reader)
 
     if any(column < 0 or column >= len(row) for column in args.columns):
-        print(f"Columns must be within the range of the csv file. Column {column} is out of range")
+        out_of_range_columns = [column for column in args.columns if column < 0 or column >= len(row)]
+        print(f"Columns must be within the range of the csv file. Columns {out_of_range_columns} are out of range")
         sys.exit(1)
     for column in args.columns:
         try:
