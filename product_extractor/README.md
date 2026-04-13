@@ -15,6 +15,7 @@ Python 3.10+
 ```
 
 `manifest` contains a list of files to copy. These must be relative paths unless you specify a prefix
+
 `destination` is the directory that will receive the files.
 
 ### Optional Parameters
