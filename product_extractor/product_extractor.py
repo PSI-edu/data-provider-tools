@@ -71,10 +71,13 @@ def extract_files(manifest, include_different_extensions, dry_run, prefix, desti
                 relative_path = os.path.relpath(candidate, prefix)
             else:
                 relative_path = candidate
-            destination = os.path.join(destination, relative_path)
+            dest_path = os.path.join(destination, relative_path)
             if not dry_run:
-                shutil.copy(candidate, destination)
-            logging.info(f"{candidate} -> {destination}")
+                parent = os.path.dirname(dest_path)
+                if parent:
+                    os.makedirs(parent, exist_ok=True)
+                shutil.copy(candidate, dest_path)
+            logging.info(f"{candidate} -> {dest_path}")
 
 
 if __name__ == "__main__":
