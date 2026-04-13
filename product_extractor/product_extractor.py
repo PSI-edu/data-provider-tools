@@ -62,15 +62,19 @@ def extract_files(manifest, include_different_extensions, dry_run, prefix, desti
             else glob.glob(f"{dirname}/{filebase}.*")
         )
         for candidate in candidates:
-            if prefix:
-                if not candidate.startswith(prefix):
-                    logging.info(
-                        f"Skipping {file} because it does not start with {prefix}"
-                    )
-                    continue
-                relative_path = os.path.relpath(candidate, prefix)
-            else:
-                relative_path = candidate
+            # Proceed only if the file is a relative path or if prefix is specified and the file starts with the prefix
+            if os.path.isabs(candidate) and not prefix:
+                logging.info(f"Skipping {file} because it is an absolute path. Specify a prefix to allow absolute paths.")
+                continue
+            if prefix and not candidate.startswith(prefix):
+                logging.info(f"Skipping {file} because it does not start with {prefix}")
+                continue
+            if not os.path.exists(candidate):
+                logging.info(f"Skipping {file} because it does not exist")
+                continue
+
+            
+            relative_path = os.path.relpath(candidate, prefix) if prefix else candidate
             dest_path = os.path.join(destination, relative_path)
             if not dry_run:
                 parent = os.path.dirname(dest_path)
