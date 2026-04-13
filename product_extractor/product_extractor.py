@@ -40,7 +40,17 @@ def main():
     logging.basicConfig(level=logging.INFO)
     os.makedirs(args.destination, exist_ok=True)
 
-    with open(args.manifest, "r") as f:
+    extract_files(
+        args.manifest,
+        args.include_different_extensions,
+        args.dry_run,
+        args.prefix,
+        args.destination,
+    )
+
+
+def extract_files(manifest, include_different_extensions, dry_run, prefix, destination):
+    with open(manifest, "r") as f:
         files = [file.strip() for file in f]
 
     for file in files:
@@ -48,21 +58,21 @@ def main():
         dirname = os.path.dirname(file)
         candidates = (
             [file]
-            if not args.include_different_extensions
+            if not include_different_extensions
             else glob.glob(f"{dirname}/{filebase}.*")
         )
         for candidate in candidates:
-            if args.prefix:
-                if not candidate.startswith(args.prefix):
+            if prefix:
+                if not candidate.startswith(prefix):
                     logging.info(
-                        f"Skipping {file} because it does not start with {args.prefix}"
+                        f"Skipping {file} because it does not start with {prefix}"
                     )
                     continue
-                relative_path = os.path.relpath(candidate, args.prefix)
+                relative_path = os.path.relpath(candidate, prefix)
             else:
                 relative_path = candidate
-            destination = os.path.join(args.destination, relative_path)
-            if not args.dry_run:
+            destination = os.path.join(destination, relative_path)
+            if not dry_run:
                 shutil.copy(candidate, destination)
             logging.info(f"{candidate} -> {destination}")
 
