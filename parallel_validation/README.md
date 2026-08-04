@@ -75,3 +75,10 @@ Each validation run produces its own independent output file. This is necessary,
 
 `product_results.sh (report_dir)/*`
 
+## Next steps
+
+### Validate with referential integrity
+
+```bash
+validate -R pds4.bundle --skip-product-validation --skip-content-validation <other options>
+```
