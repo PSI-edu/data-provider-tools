@@ -8,7 +8,7 @@ Large bundles and collections can take an unreasonable amount of time to validat
 
 ### System constraints
 
-The most important consideration is whether you are I/O bound or CPU bound. If you are I/O bound, then parallelizing the validator won't help. You can roughly determine whether you are CPU bound by running the top command while running the validator. Look for any java processes. If you see some that are running at or near 100%, that means that the entire core is being used, and you could benefit from parallelizing task. However, check your total CPU statistics, as well. If you don't have idle capacity, this means that all of your cores are already being fully utilized, and parallelizing won't help.
+The most important consideration is whether you are I/O bound or CPU bound. If you are I/O bound, then parallelizing the validator won't help. You can roughly determine whether you are CPU bound by running the top command while running the validator. Look for any java processes. If you see some that are running at or near 100%, that means that the entire core is being used, and you could benefit from parallelizing the task. However, check your total CPU statistics, as well. If you don't have idle capacity, this means that all of your cores are already being fully utilized, and parallelizing won't help.
 
 To recap, what you want to see before running parallel validation is evidence that individual cores are being fully utilized, while at the same time, there is leftover CPU capacity overall.
 
@@ -41,13 +41,41 @@ cd /path/to/parallel_validation
 ./validate_parallel_no_superseded.sh validation_directory config_file catalog_file report_directory [workers] [batch_size]
 ```
 
-Options:
-* validation directory - this where all of the files that you want to validate are stored. It doesn't matter if this is a bundle, collection, or even a subset of a collection.
-* config file - this is where you will specify options for the validate command, instead of on the command line. This makes the configurations reusable, and also simplifies the script.
-* catalog file - this will redirect all of the requests for schema and schematron files to another location, preferably on your local filesystem. It is important to have one of these, since the validator will reach out to the internet to reload the catalogs on a regular basis otherwise, degrading performance.
-* report directory - this is where all of the output files are stored. This directory will be automatically created if if does not exist.
-* workers - this specifies how many instances of validate you want to run at once. If you don't provide this, the script will default to 4. See below to get the correct value.
-* batch size - this specifies how many products each validate instance will process. If you don't providde this, the script will defauly to 1000. This should probably be left as-is. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
+### Options
+
+#### validation_directory
+
+This where all of the files that you want to validate are stored. It doesn't matter if 
+this is a bundle, collection, or even a subset of a collection.
+
+#### config file
+
+This is where you will specify options for the validate command, instead of on the command line. This makes the configurations reusable, and also simplifies the script. The format of the config file is located in the [validate manual](https://nasa-pds.github.io/validate/operate/index.html#using-a-configuration-file).
+
+**Recommendation:** Generally, you will not need to specify additional options. In that case, use the included validate.conf file.
+
+
+#### catalog file
+
+This will redirect all of the requests for schema and schematron files to another location, preferably on your local filesystem. It is important to have one of these, since the validator will reach out to the internet to reload the catalogs on a regular basis otherwise, degrading performance.
+
+#### report directory
+
+This is where all of the output files are stored. This directory will be automatically created if if does not exist.
+
+**Recommendation:** Use a dedicated directory for every bundle. The parallel validator will generate a large number of validation reports. This will clutter up directories that already have other files. Intermingling the validaiton reports with other files will also make it more difficult to run the follow-up tools.
+
+#### workers
+
+This specifies how many instances of validate you want to run at once. If you don't provide this, the script will default to 4. See below to get the correct value.
+
+**Recommendation:** The quick answer is to use the number of cores available, or possibly one less.
+
+#### batch size
+
+This specifies how many products each validate instance will process. If you don't providde this, the script will default to 1000. 
+
+**Recommendation**: This should probably be left at 1000. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
 
 ### How many processes do I need?
 
@@ -75,3 +103,12 @@ Each validation run produces its own independent output file. This is necessary,
 
 `product_results.sh (report_dir)/*`
 
+## Next steps
+
+### Validate with referential integrity
+
+```bash
+validate -R pds4.bundle --skip-product-validation --skip-content-validation <other options>
+```
+
+This will run only the referential integrity checks on your bundle. Once you have performed the other validations, you want to avoid running the same validations again, which would use up a lot ot time.
