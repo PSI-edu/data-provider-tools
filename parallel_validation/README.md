@@ -41,14 +41,19 @@ cd /path/to/parallel_validation
 ./validate_parallel_no_superseded.sh validation_directory config_file catalog_file report_directory [workers] [batch_size]
 ```
 
-### Options:
+### Options
+
 #### validation_directory
 
-This where all of the files that you want to validate are stored. It doesn't matter if this is a bundle, collection, or even a subset of a collection.
+This where all of the files that you want to validate are stored. It doesn't matter if 
+this is a bundle, collection, or even a subset of a collection.
 
 #### config file
 
-This is where you will specify options for the validate command, instead of on the command line. This makes the configurations reusable, and also simplifies the script.
+This is where you will specify options for the validate command, instead of on the command line. This makes the configurations reusable, and also simplifies the script. The format of the config file is located in the [validate manual](https://nasa-pds.github.io/validate/operate/index.html#using-a-configuration-file).
+
+**Recommendation:** Generally, you will not need to specify additional options. In that case, use the included validate.conf file.
+
 
 #### catalog file
 
@@ -58,13 +63,19 @@ This will redirect all of the requests for schema and schematron files to anothe
 
 This is where all of the output files are stored. This directory will be automatically created if if does not exist.
 
+**Recommendation:** Use a dedicated directory for every bundle. The parallel validator will generate a large number of validation reports. This will clutter up directories that already have other files. Intermingling the validaiton reports with other files will also make it more difficult to run the follow-up tools.
+
 #### workers
 
 This specifies how many instances of validate you want to run at once. If you don't provide this, the script will default to 4. See below to get the correct value.
 
+**Recommendation:** The quick answer is to use the number of cores available, or possibly one less.
+
 #### batch size
 
-This specifies how many products each validate instance will process. If you don't providde this, the script will default to 1000. This should probably be left as-is. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
+This specifies how many products each validate instance will process. If you don't providde this, the script will default to 1000. 
+
+**Recommendation**: This should probably be left at 1000. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
 
 ### How many processes do I need?
 
