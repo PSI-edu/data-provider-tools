@@ -8,7 +8,7 @@ Large bundles and collections can take an unreasonable amount of time to validat
 
 ### System constraints
 
-The most important consideration is whether you are I/O bound or CPU bound. If you are I/O bound, then parallelizing the validator won't help. You can roughly determine whether you are CPU bound by running the top command while running the validator. Look for any java processes. If you see some that are running at or near 100%, that means that the entire core is being used, and you could benefit from parallelizing task. However, check your total CPU statistics, as well. If you don't have idle capacity, this means that all of your cores are already being fully utilized, and parallelizing won't help.
+The most important consideration is whether you are I/O bound or CPU bound. If you are I/O bound, then parallelizing the validator won't help. You can roughly determine whether you are CPU bound by running the top command while running the validator. Look for any java processes. If you see some that are running at or near 100%, that means that the entire core is being used, and you could benefit from parallelizing the task. However, check your total CPU statistics, as well. If you don't have idle capacity, this means that all of your cores are already being fully utilized, and parallelizing won't help.
 
 To recap, what you want to see before running parallel validation is evidence that individual cores are being fully utilized, while at the same time, there is leftover CPU capacity overall.
 
@@ -47,7 +47,7 @@ Options:
 * catalog file - this will redirect all of the requests for schema and schematron files to another location, preferably on your local filesystem. It is important to have one of these, since the validator will reach out to the internet to reload the catalogs on a regular basis otherwise, degrading performance.
 * report directory - this is where all of the output files are stored. This directory will be automatically created if if does not exist.
 * workers - this specifies how many instances of validate you want to run at once. If you don't provide this, the script will default to 4. See below to get the correct value.
-* batch size - this specifies how many products each validate instance will process. If you don't providde this, the script will defauly to 1000. This should probably be left as-is. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
+* batch size - this specifies how many products each validate instance will process. If you don't providde this, the script will default to 1000. This should probably be left as-is. Going higher will likely exceed the maximum argument list length, and will get clamped back down anyway.
 
 ### How many processes do I need?
 
